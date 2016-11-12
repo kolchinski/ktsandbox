@@ -23,9 +23,9 @@ pG = 0.25
 pS = .05
 pT = 0.1
 
-numStudents = 10
+numStudents = 100
 numQuestions = 300
-numConcepts = 5
+numConcepts = 2
 
 conceptDiffs = np.random.normal(0,1,numConcepts)
 qConcepts = np.random.randint(0,numConcepts, numQuestions)
@@ -39,7 +39,7 @@ for i in range(numStudents):
   know = np.random.binomial(1, pL0, numConcepts)
   for j in range(numQuestions):
     curConcept = qConcepts[j]
-    if i == 0 and curConcept == 0: print know[0]
+    #if i == 0 and curConcept == 0: print know[0]
     knowTracks[i, curConcept, j] = know[curConcept]
     knowTracks[i, :, j] = know
     answers[i,j] = ber(pRight(diffs[j], know[curConcept]))
@@ -49,3 +49,42 @@ for i in range(numStudents):
 #print "question concepts", qConcepts
 #print "question diffs", diffs
 #print answers
+
+
+def multinomify(traj):
+  return [[int(t==0),int(t==1)] for t in traj]
+
+#Now, infer HMM parameters from emissions:
+from hmmlearn.hmm import MultinomialHMM
+model = MultinomialHMM(n_components=2)
+trainData = []
+trainLengths = []
+for s in range(numStudents):
+  for c in range(numConcepts):
+    trajectories = answers[s,qConcepts == c]
+    trainData += multinomify(trajectories)
+    trainLengths += [len(trajectories)]
+ 
+
+M = model.fit(trainData, trainLengths)
+print M.emissionprob_
+print M.transmat_
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
