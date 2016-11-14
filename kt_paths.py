@@ -6,10 +6,10 @@ class Question:
   def __init__(self, difficulty, concept):
     self.d = difficulty
     self.c = concept
-  
+
   def pRight(self, skill):
     return 1.0/(1.0 + np.exp(self.d - skill))
-    
+
 
 def ber(p):
   return np.random.binomial(1,p)
@@ -64,27 +64,8 @@ for s in range(numStudents):
     trajectories = answers[s,qConcepts == c]
     trainData += multinomify(trajectories)
     trainLengths += [len(trajectories)]
- 
-
-M = model.fit(trainData, trainLengths)
-print M.emissionprob_
-print M.transmat_
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#M = model.fit(trainData, trainLengths)
+#print M.emissionprob_
+#print M.transmat_
